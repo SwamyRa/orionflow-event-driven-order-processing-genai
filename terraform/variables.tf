@@ -27,6 +27,11 @@ variable "bedrock_model_id" {
   default     = "amazon.nova-micro-v1:0"
 }
 
+variable "repository_id" {
+  description = "Bitbucket repository ID (format: username/repo-name)"
+  type        = string
+}
+
 variable "lambda_memory" {
   description = "Lambda memory in MB"
   type        = number

@@ -1,0 +1,61 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "========================================="
+      - echo "🔑 Logging into Amazon ECR..."
+      - echo "========================================="
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/eks-analytics
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - echo "✅ ECR login successful"
+
+  build:
+    commands:
+      - echo "========================================="
+      - echo "🔨 Building Lambda JAR..."
+      - echo "========================================="
+      - cd lambda/order-processor
+      - mvn clean package -DskipTests
+      - cd ../..
+      - echo "✅ Lambda JAR built"
+
+      - echo "========================================="
+      - echo "🔨 Building EKS Analytics JAR..."
+      - echo "========================================="
+      - cd eks-analytics
+      - mvn clean package -DskipTests
+      - cd ..
+      - echo "✅ EKS Analytics JAR built"
+
+      - echo "========================================="
+      - echo "🐳 Building Docker image..."
+      - echo "========================================="
+      - cd eks-analytics
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - cd ..
+      - echo "✅ Docker image built"
+
+  post_build:
+    commands:
+      - echo "========================================="
+      - echo "📤 Pushing Docker image to ECR..."
+      - echo "========================================="
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo "✅ Docker image pushed"
+
+      - echo "========================================="
+      - echo "📝 Writing image definitions..."
+      - echo "========================================="
+      - printf '[{"name":"eks-analytics","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - echo "✅ Build complete"
+
+artifacts:
+  files:
+    - lambda/order-processor/target/order-processor-1.0.0.jar
+    - imagedefinitions.json
+    - eks-analytics/helm/**/*
