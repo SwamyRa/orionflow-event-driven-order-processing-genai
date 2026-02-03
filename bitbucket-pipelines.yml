@@ -23,7 +23,7 @@ pipelines:
           - chmod +x kubectl && mv kubectl /usr/local/bin/
           - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
           - wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
-          - unzip terraform_1.6.0_linux_amd64.zip
+          - unzip -o terraform_1.6.0_linux_amd64.zip
           - chmod +x terraform
           - mv terraform /usr/local/bin/
           - terraform version
@@ -124,7 +124,7 @@ pipelines:
             - chmod +x kubectl && mv kubectl /usr/local/bin/
             - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
             - wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
-            - unzip terraform_1.6.0_linux_amd64.zip
+            - unzip -o terraform_1.6.0_linux_amd64.zip
             - chmod +x terraform
             - mv terraform /usr/local/bin/
             - terraform version
