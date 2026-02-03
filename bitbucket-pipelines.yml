@@ -85,7 +85,7 @@ pipelines:
           - echo "========================================"
           - echo "🚀 Applying Terraform (deploying AWS resources)..."
           - echo "========================================"
-          - terraform apply -auto-approve -var="sns_email=$SNS_EMAIL"
+          - terraform apply -auto-approve -var="notification_email=$SNS_EMAIL"
           - cd ..
           - echo "✅ Terraform applied successfully"
 
@@ -160,7 +160,7 @@ pipelines:
             - echo "========================================"
             - echo "💥 Destroying EKS resources only..."
             - echo "========================================"
-            - terraform destroy -auto-approve -target=aws_eks_cluster.main -target=aws_eks_node_group.main -target=aws_iam_role.eks_cluster_role -target=aws_iam_role.eks_node_role -target=aws_iam_role_policy_attachment.eks_cluster_policy -target=aws_iam_role_policy_attachment.eks_worker_node_policy -target=aws_iam_role_policy_attachment.eks_cni_policy -target=aws_iam_role_policy_attachment.eks_container_registry_policy -target=aws_iam_role_policy.eks_node_additional_policy -target=aws_vpc.eks_vpc -target=aws_subnet.eks_subnet -target=aws_internet_gateway.eks_igw -target=aws_route_table.eks_route_table -target=aws_route_table_association.eks_rta -var="sns_email=$SNS_EMAIL"
+            - terraform destroy -auto-approve -target=aws_eks_cluster.main -target=aws_eks_node_group.main -target=aws_iam_role.eks_cluster_role -target=aws_iam_role.eks_node_role -target=aws_iam_role_policy_attachment.eks_cluster_policy -target=aws_iam_role_policy_attachment.eks_worker_node_policy -target=aws_iam_role_policy_attachment.eks_cni_policy -target=aws_iam_role_policy_attachment.eks_container_registry_policy -target=aws_iam_role_policy.eks_node_additional_policy -target=aws_vpc.eks_vpc -target=aws_subnet.eks_subnet -target=aws_internet_gateway.eks_igw -target=aws_route_table.eks_route_table -target=aws_route_table_association.eks_rta -var="notification_email=$SNS_EMAIL"
             - echo "========================================"
             - echo "✅ EKS destroyed. Lambda and other services remain intact."
             - echo "========================================"
