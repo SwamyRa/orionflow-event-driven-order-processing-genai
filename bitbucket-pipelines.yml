@@ -13,17 +13,20 @@ pipelines:
           - docker
         script:
           # Install dependencies
-          - echo "========================================"
+          - echo "======================================="
           - echo "📦 Installing dependencies..."
-          - echo "========================================"
-          - apt-get update && apt-get install -y curl unzip maven openjdk-17-jdk
+          - echo "======================================="
+          - apt-get update && apt-get install -y curl unzip maven openjdk-17-jdk wget
           - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           - unzip awscliv2.zip && ./aws/install
           - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           - chmod +x kubectl && mv kubectl /usr/local/bin/
           - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          - curl -LO https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
-          - unzip terraform_1.6.0_linux_amd64.zip && mv terraform /usr/local/bin/
+          - wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+          - unzip terraform_1.6.0_linux_amd64.zip
+          - chmod +x terraform
+          - mv terraform /usr/local/bin/
+          - terraform version
           - echo "✅ Dependencies installed"
 
           # Configure AWS
@@ -114,14 +117,17 @@ pipelines:
             - echo "========================================"
             - echo "📦 Installing dependencies..."
             - echo "========================================"
-            - apt-get update && apt-get install -y curl unzip
+            - apt-get update && apt-get install -y curl unzip wget
             - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             - unzip awscliv2.zip && ./aws/install
             - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             - chmod +x kubectl && mv kubectl /usr/local/bin/
             - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-            - curl -LO https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
-            - unzip terraform_1.6.0_linux_amd64.zip && mv terraform /usr/local/bin/
+            - wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+            - unzip terraform_1.6.0_linux_amd64.zip
+            - chmod +x terraform
+            - mv terraform /usr/local/bin/
+            - terraform version
             - echo "✅ Dependencies installed"
 
             # Configure AWS
