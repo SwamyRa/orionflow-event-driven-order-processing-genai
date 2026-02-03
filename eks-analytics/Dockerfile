@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM public.ecr.aws/amazoncorretto/amazoncorretto:17-alpine
 
 WORKDIR /app
 
