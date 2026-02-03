@@ -156,7 +156,7 @@ resource "aws_codebuild_project" "build" {
 
 resource "aws_codestarconnections_connection" "source" {
   name          = "${var.project_name}-source-${var.environment}"
-  provider_type = "Bitbucket"
+  provider_type = "GitHub"
 }
 
 resource "aws_codepipeline" "pipeline" {
