@@ -222,5 +222,3 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
 }
-
-data "aws_caller_identity" "current" {}
