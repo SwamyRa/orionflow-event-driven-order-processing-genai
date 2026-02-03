@@ -30,9 +30,12 @@ pipelines:
           - echo "========================================"
           - echo "🔑 Configuring AWS credentials..."
           - echo "========================================"
-          - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-          - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-          - aws configure set default.region us-east-1
+          - mkdir -p ~/.aws
+          - echo "[default]" > ~/.aws/credentials
+          - echo "aws_access_key_id = $AWS_ACCESS_KEY_ID" >> ~/.aws/credentials
+          - echo "aws_secret_access_key = $AWS_SECRET_ACCESS_KEY" >> ~/.aws/credentials
+          - echo "[default]" > ~/.aws/config
+          - echo "region = us-east-1" >> ~/.aws/config
           - echo "✅ AWS configured"
 
           # Build Lambda
@@ -57,13 +60,15 @@ pipelines:
           - echo "========================================"
           - echo "🐳 Building and pushing Docker image..."
           - echo "========================================"
-          - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+          - export ECR_REGISTRY=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
+          - aws ecr describe-repositories --repository-names eks-analytics --region us-east-1 || aws ecr create-repository --repository-name eks-analytics --region us-east-1
+          - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_REGISTRY}
           - cd eks-analytics
-          - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:$BITBUCKET_COMMIT .
-          - docker tag $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:$BITBUCKET_COMMIT $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:latest
+          - docker build -t ${ECR_REGISTRY}/eks-analytics:${BITBUCKET_COMMIT} .
+          - docker tag ${ECR_REGISTRY}/eks-analytics:${BITBUCKET_COMMIT} ${ECR_REGISTRY}/eks-analytics:latest
           - echo "📤 Pushing images to ECR..."
-          - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:$BITBUCKET_COMMIT
-          - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:latest
+          - docker push ${ECR_REGISTRY}/eks-analytics:${BITBUCKET_COMMIT}
+          - docker push ${ECR_REGISTRY}/eks-analytics:latest
           - cd ..
           - echo "✅ Docker images pushed successfully"
 
@@ -91,7 +96,7 @@ pipelines:
           - echo "📦 Deploying application to EKS..."
           - echo "========================================"
           - cd eks-analytics/helm
-          - helm upgrade --install eks-analytics . --set image.repository=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics --set image.tag=$BITBUCKET_COMMIT --wait
+          - helm upgrade --install eks-analytics . --set image.repository=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/eks-analytics --set image.tag=${BITBUCKET_COMMIT} --wait
           - echo "✅ Application deployed to EKS"
           - echo "========================================"
           - echo "🔍 Verifying deployment..."
@@ -123,9 +128,12 @@ pipelines:
             - echo "========================================"
             - echo "🔑 Configuring AWS credentials..."
             - echo "========================================"
-            - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-            - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-            - aws configure set default.region us-east-1
+            - mkdir -p ~/.aws
+            - echo "[default]" > ~/.aws/credentials
+            - echo "aws_access_key_id = $AWS_ACCESS_KEY_ID" >> ~/.aws/credentials
+            - echo "aws_secret_access_key = $AWS_SECRET_ACCESS_KEY" >> ~/.aws/credentials
+            - echo "[default]" > ~/.aws/config
+            - echo "region = us-east-1" >> ~/.aws/config
             - echo "✅ AWS configured"
 
             # Delete Helm deployment
