@@ -1,12 +1,20 @@
-# README #
+# AI-Powered Order Processing System with FinOps Intelligence
 
-This README would normally document whatever steps are necessary to get your application up and running.
+> Serverless order processing with real-time fraud detection and comprehensive cost tracking
 
-### What is this repository for? ###
+## 🎯 Project Overview
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+This project demonstrates a production-ready order processing system that combines:
+- **AI-powered fraud detection** using Amazon Bedrock
+- **Real-time cost tracking** for every transaction
+- **Hybrid architecture** (Serverless + EKS)
+- **Complete FinOps visibility** with daily reports
+
+### What is this repository for?
+
+* Enterprise-grade order processing system
+* FinOps best practices demonstration
+* AWS serverless + container orchestration
 
 ### How do I get set up? ###
 

@@ -1,0 +1,17 @@
+{
+  "endpoint": "GET /api/finops/costs",
+  "description": "Get actual AWS costs from Cost Explorer",
+  "method": "GET",
+  "url": "http://localhost:8080/api/finops/costs?startDate=2024-01-01&endDate=2024-01-31",
+  "queryParams": {
+    "startDate": "2024-01-01",
+    "endDate": "2024-01-31"
+  },
+  "expectedResponse": {
+    "actualLambdaCost": 0.38,
+    "actualDynamoDbCost": 0.15,
+    "actualS3Cost": 0.02,
+    "actualBedrockCost": 0.56
+  },
+  "notes": "Returns actual costs from AWS Cost Explorer API. Compare with estimated costs from metrics endpoint."
+}

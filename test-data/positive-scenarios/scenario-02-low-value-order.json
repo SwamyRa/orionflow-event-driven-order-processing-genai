@@ -1,0 +1,25 @@
+{
+  "orderId": "ORD-2024-002",
+  "customerId": "CUST-67890",
+  "customerEmail": "jane.smith@yahoo.com",
+  "customerType": "REGULAR",
+  "orderHistory": 2,
+  "items": [
+    {
+      "productId": "PROD-002",
+      "name": "USB Cable",
+      "quantity": 2,
+      "price": 15.00
+    }
+  ],
+  "totalAmount": 30.00,
+  "shippingAddress": {
+    "street": "456 Oak Ave",
+    "city": "Boston",
+    "state": "MA",
+    "zipCode": "02101",
+    "country": "USA"
+  },
+  "paymentMethod": "CREDIT_CARD",
+  "cardLast4": "5555"
+}

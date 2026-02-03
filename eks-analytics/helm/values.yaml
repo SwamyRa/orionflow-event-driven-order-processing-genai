@@ -1,0 +1,28 @@
+replicaCount: 2
+
+serviceAccount:
+  roleArn: arn:aws:iam::418295711730:role/eks-analytics-role
+
+image:
+  repository: 418295711730.dkr.ecr.us-east-1.amazonaws.com/eks-analytics
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+env:
+  AWS_REGION: us-east-1
+  DYNAMODB_TABLE_NAME: order-processing-orders-dev
+  SNS_TOPIC_ARN: arn:aws:sns:us-east-1:418295711730:order-processing-notifications-dev
+
+
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi

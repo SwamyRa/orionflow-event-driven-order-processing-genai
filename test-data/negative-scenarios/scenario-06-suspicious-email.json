@@ -1,0 +1,25 @@
+{
+  "orderId": "ORD-2024-006",
+  "customerId": "CUST-99999",
+  "customerEmail": "test123@tempmail.com",
+  "customerType": "REGULAR",
+  "orderHistory": 0,
+  "items": [
+    {
+      "productId": "PROD-006",
+      "name": "iPhone 15 Pro",
+      "quantity": 5,
+      "price": 999.00
+    }
+  ],
+  "totalAmount": 4995.00,
+  "shippingAddress": {
+    "street": "123 Fake St",
+    "city": "Nowhere",
+    "state": "XX",
+    "zipCode": "00000",
+    "country": "Unknown"
+  },
+  "paymentMethod": "CREDIT_CARD",
+  "cardLast4": "0000"
+}

@@ -1,0 +1,10 @@
+{
+  "endpoint": "GET /api/finops/forecast",
+  "description": "Get 30-day cost forecast",
+  "method": "GET",
+  "url": "http://localhost:8080/api/finops/forecast",
+  "expectedResponse": {
+    "forecastedMonthlyCost": 35.50
+  },
+  "notes": "Uses AWS Cost Explorer ML models to predict next 30 days of costs"
+}

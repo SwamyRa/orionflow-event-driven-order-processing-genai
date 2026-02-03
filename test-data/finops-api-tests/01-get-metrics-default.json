@@ -1,0 +1,16 @@
+{
+  "endpoint": "GET /api/finops/metrics",
+  "description": "Get order metrics for last 7 days",
+  "method": "GET",
+  "url": "http://localhost:8080/api/finops/metrics",
+  "expectedResponse": {
+    "totalOrders": 150,
+    "approvedOrders": 140,
+    "rejectedOrders": 8,
+    "pendingReviewOrders": 2,
+    "totalProcessingCost": 0.35,
+    "bedrockCost": 0.18,
+    "lambdaCost": 0.12
+  },
+  "notes": "Defaults to last 7 days if no date parameters provided"
+}

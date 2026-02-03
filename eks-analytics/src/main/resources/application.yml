@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: eks-analytics
+
+aws:
+  region: ${AWS_REGION:us-east-1}
+  dynamodb:
+    table-name: ${DYNAMODB_TABLE_NAME:order-processing-orders-dev}
+  sns:
+    topic-arn: ${SNS_TOPIC_ARN}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.orderprocessing: INFO
+    software.amazon.awssdk: WARN

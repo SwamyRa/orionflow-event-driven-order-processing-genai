@@ -1,0 +1,38 @@
+{
+  "endpoint": "GET /api/finops/report",
+  "description": "Generate FinOps report for custom date range (weekly)",
+  "method": "GET",
+  "url": "http://localhost:8080/api/finops/report?startDate=2024-01-01&endDate=2024-01-07",
+  "queryParams": {
+    "startDate": "2024-01-01",
+    "endDate": "2024-01-07"
+  },
+  "expectedResponse": {
+    "reportDate": "2024-01-07",
+    "period": "Custom",
+    "totalOrders": 1050,
+    "approvedOrders": 980,
+    "rejectedOrders": 56,
+    "pendingReviewOrders": 14,
+    "totalProcessingCost": 2.45,
+    "bedrockCost": 1.26,
+    "lambdaCost": 0.84,
+    "dynamoDbCost": 0.21,
+    "s3Cost": 0.07,
+    "snsCost": 0.0007,
+    "apiGatewayCost": 0.0693,
+    "actualLambdaCost": 0.91,
+    "actualDynamoDbCost": 0.22,
+    "actualS3Cost": 0.08,
+    "actualBedrockCost": 1.33,
+    "estimatedVsActualVariance": 5.5,
+    "costTrend": 8.2,
+    "orderTrend": 12.5,
+    "optimizationRecommendations": [
+      "High cost per order detected. Review Bedrock token usage.",
+      "Bedrock costs 20% higher than estimated. Update cost calculator."
+    ],
+    "forecastedMonthlyCost": 35.50
+  },
+  "notes": "Weekly report for first week of January. Period shows 'Custom' for multi-day ranges."
+}

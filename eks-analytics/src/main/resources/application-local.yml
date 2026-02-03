@@ -1,0 +1,33 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: eks-analytics-local
+
+aws:
+  region: us-east-1
+  dynamodb:
+    table-name: order-processing-orders-dev
+  sns:
+    topic-arn: arn:aws:sns:us-east-1:418295711730:order-processing-notifications-dev
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.orderprocessing: INFO
+    software.amazon.awssdk: WARN
+    org.springframework: INFO
+
+# Local testing notes:
+# - Uses AWS credentials from environment variables or ~/.aws/credentials
+# - Connects to actual AWS resources (DynamoDB, CloudWatch, Cost Explorer)
+# - No Docker/EKS required for testing

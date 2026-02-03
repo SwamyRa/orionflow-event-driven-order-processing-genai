@@ -1,0 +1,33 @@
+{
+  "endpoint": "GET /api/finops/report",
+  "description": "Generate complete FinOps report for yesterday",
+  "method": "GET",
+  "url": "http://localhost:8080/api/finops/report",
+  "expectedResponse": {
+    "reportDate": "2024-01-31",
+    "period": "Daily",
+    "totalOrders": 150,
+    "approvedOrders": 140,
+    "rejectedOrders": 8,
+    "pendingReviewOrders": 2,
+    "totalProcessingCost": 0.35,
+    "bedrockCost": 0.18,
+    "lambdaCost": 0.12,
+    "dynamoDbCost": 0.03,
+    "s3Cost": 0.01,
+    "snsCost": 0.0001,
+    "apiGatewayCost": 0.0099,
+    "actualLambdaCost": 0.13,
+    "actualDynamoDbCost": 0.03,
+    "actualS3Cost": 0.01,
+    "actualBedrockCost": 0.19,
+    "estimatedVsActualVariance": 5.7,
+    "costTrend": 2.3,
+    "orderTrend": 5.1,
+    "optimizationRecommendations": [
+      "Bedrock costs 5% higher than estimated. Update cost calculator."
+    ],
+    "forecastedMonthlyCost": 35.50
+  },
+  "notes": "Defaults to yesterday if no date provided. Includes all metrics, costs, and recommendations."
+}

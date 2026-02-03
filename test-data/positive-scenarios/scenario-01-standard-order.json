@@ -1,0 +1,25 @@
+{
+  "orderId": "ORD-2024-001",
+  "customerId": "CUST-12345",
+  "customerEmail": "john.doe@gmail.com",
+  "customerType": "REGULAR",
+  "orderHistory": 5,
+  "items": [
+    {
+      "productId": "PROD-001",
+      "name": "Laptop",
+      "quantity": 1,
+      "price": 1200.00
+    }
+  ],
+  "totalAmount": 1200.00,
+  "shippingAddress": {
+    "street": "123 Main St",
+    "city": "New York",
+    "state": "NY",
+    "zipCode": "10001",
+    "country": "USA"
+  },
+  "paymentMethod": "CREDIT_CARD",
+  "cardLast4": "4242"
+}

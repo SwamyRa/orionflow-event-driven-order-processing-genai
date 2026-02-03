@@ -1,0 +1,152 @@
+image: atlassian/default-image:3
+
+definitions:
+  services:
+    docker:
+      memory: 2048
+
+pipelines:
+  default:
+    - step:
+        name: Deploy All Services
+        services:
+          - docker
+        script:
+          # Install dependencies
+          - echo "========================================"
+          - echo "📦 Installing dependencies..."
+          - echo "========================================"
+          - apt-get update && apt-get install -y curl unzip maven openjdk-17-jdk
+          - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          - unzip awscliv2.zip && ./aws/install
+          - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          - chmod +x kubectl && mv kubectl /usr/local/bin/
+          - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          - curl -LO https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+          - unzip terraform_1.6.0_linux_amd64.zip && mv terraform /usr/local/bin/
+          - echo "✅ Dependencies installed"
+
+          # Configure AWS
+          - echo "========================================"
+          - echo "🔑 Configuring AWS credentials..."
+          - echo "========================================"
+          - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+          - export AWS_DEFAULT_REGION=us-east-1
+          - echo "✅ AWS configured"
+
+          # Build Lambda
+          - echo "========================================"
+          - echo "🔨 Building Lambda JAR..."
+          - echo "========================================"
+          - cd lambda/order-processor
+          - mvn clean package -DskipTests
+          - cd ../..
+          - echo "✅ Lambda JAR built successfully"
+
+          # Build EKS Analytics
+          - echo "========================================"
+          - echo "🔨 Building EKS Analytics JAR..."
+          - echo "========================================"
+          - cd eks-analytics
+          - mvn clean package -DskipTests
+          - cd ..
+          - echo "✅ EKS Analytics JAR built successfully"
+
+          # Login to ECR and build Docker
+          - echo "========================================"
+          - echo "🐳 Building and pushing Docker image..."
+          - echo "========================================"
+          - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+          - cd eks-analytics
+          - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:$BITBUCKET_COMMIT .
+          - docker tag $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:$BITBUCKET_COMMIT $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:latest
+          - echo "📤 Pushing images to ECR..."
+          - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:$BITBUCKET_COMMIT
+          - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics:latest
+          - cd ..
+          - echo "✅ Docker images pushed successfully"
+
+          # Deploy Terraform
+          - echo "========================================"
+          - echo "🔧 Initializing Terraform..."
+          - echo "========================================"
+          - cd terraform
+          - terraform init
+          - echo "✅ Terraform initialized"
+          - echo "========================================"
+          - echo "🚀 Applying Terraform (deploying AWS resources)..."
+          - echo "========================================"
+          - terraform apply -auto-approve -var="sns_email=$SNS_EMAIL"
+          - cd ..
+          - echo "✅ Terraform applied successfully"
+
+          # Deploy to EKS
+          - echo "========================================"
+          - echo "☸️  Connecting to EKS cluster..."
+          - echo "========================================"
+          - aws eks update-kubeconfig --name order-processing-eks-dev --region us-east-1
+          - echo "✅ Connected to EKS cluster"
+          - echo "========================================"
+          - echo "📦 Deploying application to EKS..."
+          - echo "========================================"
+          - cd eks-analytics/helm
+          - helm upgrade --install eks-analytics . --set image.repository=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/eks-analytics --set image.tag=$BITBUCKET_COMMIT --wait
+          - echo "✅ Application deployed to EKS"
+          - echo "========================================"
+          - echo "🔍 Verifying deployment..."
+          - echo "========================================"
+          - kubectl get pods -l app=eks-analytics
+          - kubectl get svc eks-analytics
+          - echo "✅ Deployment verification complete"
+
+  custom:
+    destroy-eks:
+      - step:
+          name: Destroy EKS Only
+          script:
+            # Install dependencies
+            - echo "========================================"
+            - echo "📦 Installing dependencies..."
+            - echo "========================================"
+            - apt-get update && apt-get install -y curl unzip
+            - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            - unzip awscliv2.zip && ./aws/install
+            - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            - chmod +x kubectl && mv kubectl /usr/local/bin/
+            - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+            - curl -LO https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+            - unzip terraform_1.6.0_linux_amd64.zip && mv terraform /usr/local/bin/
+            - echo "✅ Dependencies installed"
+
+            # Configure AWS
+            - echo "========================================"
+            - echo "🔑 Configuring AWS credentials..."
+            - echo "========================================"
+            - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            - export AWS_DEFAULT_REGION=us-east-1
+            - echo "✅ AWS configured"
+
+            # Delete Helm deployment
+            - echo "========================================"
+            - echo "🗑️  Uninstalling Helm chart..."
+            - echo "========================================"
+            - aws eks update-kubeconfig --name order-processing-eks-dev --region us-east-1 || true
+            - helm uninstall eks-analytics || true
+            - echo "✅ Helm chart uninstalled"
+
+            # Destroy EKS only
+            - echo "========================================"
+            - echo "🔧 Initializing Terraform..."
+            - echo "========================================"
+            - cd terraform
+            - terraform init
+            - echo "✅ Terraform initialized"
+            - echo "========================================"
+            - echo "💥 Destroying EKS resources only..."
+            - echo "========================================"
+            - terraform destroy -auto-approve -target=aws_eks_cluster.main -target=aws_eks_node_group.main -target=aws_iam_role.eks_cluster_role -target=aws_iam_role.eks_node_role -target=aws_iam_role_policy_attachment.eks_cluster_policy -target=aws_iam_role_policy_attachment.eks_worker_node_policy -target=aws_iam_role_policy_attachment.eks_cni_policy -target=aws_iam_role_policy_attachment.eks_container_registry_policy -target=aws_iam_role_policy.eks_node_additional_policy -target=aws_vpc.eks_vpc -target=aws_subnet.eks_subnet -target=aws_internet_gateway.eks_igw -target=aws_route_table.eks_route_table -target=aws_route_table_association.eks_rta -var="sns_email=$SNS_EMAIL"
+            - echo "========================================"
+            - echo "✅ EKS destroyed. Lambda and other services remain intact."
+            - echo "========================================"

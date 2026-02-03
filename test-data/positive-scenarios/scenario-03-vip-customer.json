@@ -1,0 +1,25 @@
+{
+  "orderId": "ORD-2024-003",
+  "customerId": "CUST-VIP-001",
+  "customerEmail": "vip.customer@company.com",
+  "customerType": "VIP",
+  "orderHistory": 50,
+  "items": [
+    {
+      "productId": "PROD-003",
+      "name": "MacBook Pro",
+      "quantity": 1,
+      "price": 2500.00
+    }
+  ],
+  "totalAmount": 2500.00,
+  "shippingAddress": {
+    "street": "789 Business Blvd",
+    "city": "San Francisco",
+    "state": "CA",
+    "zipCode": "94102",
+    "country": "USA"
+  },
+  "paymentMethod": "CREDIT_CARD",
+  "cardLast4": "1111"
+}

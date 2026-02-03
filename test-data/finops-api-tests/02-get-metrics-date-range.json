@@ -1,0 +1,20 @@
+{
+  "endpoint": "GET /api/finops/metrics",
+  "description": "Get order metrics for specific date range",
+  "method": "GET",
+  "url": "http://localhost:8080/api/finops/metrics?startDate=2024-01-01&endDate=2024-01-31",
+  "queryParams": {
+    "startDate": "2024-01-01",
+    "endDate": "2024-01-31"
+  },
+  "expectedResponse": {
+    "totalOrders": 450,
+    "approvedOrders": 420,
+    "rejectedOrders": 25,
+    "pendingReviewOrders": 5,
+    "totalProcessingCost": 1.05,
+    "bedrockCost": 0.54,
+    "lambdaCost": 0.36
+  },
+  "notes": "Query full month of January 2024"
+}

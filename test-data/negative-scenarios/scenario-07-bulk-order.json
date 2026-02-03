@@ -1,0 +1,25 @@
+{
+  "orderId": "ORD-2024-007",
+  "customerId": "CUST-88888",
+  "customerEmail": "random@gmail.com",
+  "customerType": "REGULAR",
+  "orderHistory": 0,
+  "items": [
+    {
+      "productId": "PROD-007",
+      "name": "Gaming Console",
+      "quantity": 10,
+      "price": 499.00
+    }
+  ],
+  "totalAmount": 4990.00,
+  "shippingAddress": {
+    "street": "Unknown",
+    "city": "Test City",
+    "state": "CA",
+    "zipCode": "90001",
+    "country": "USA"
+  },
+  "paymentMethod": "CREDIT_CARD",
+  "cardLast4": "1234"
+}

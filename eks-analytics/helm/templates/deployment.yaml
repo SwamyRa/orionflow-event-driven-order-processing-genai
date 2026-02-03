@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eks-analytics
+  labels:
+    app: eks-analytics
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: eks-analytics
+  template:
+    metadata:
+      labels:
+        app: eks-analytics
+    spec:
+      serviceAccountName: eks-analytics-sa
+      containers:
+      - name: eks-analytics
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8080
+        env:
+        - name: AWS_REGION
+          value: "{{ .Values.env.AWS_REGION }}"
+        - name: DYNAMODB_TABLE_NAME
+          value: "{{ .Values.env.DYNAMODB_TABLE_NAME }}"
+        - name: SNS_TOPIC_ARN
+          value: "{{ .Values.env.SNS_TOPIC_ARN }}"
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}

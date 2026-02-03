@@ -1,0 +1,25 @@
+{
+  "orderId": "ORD-2024-009",
+  "customerId": "CUST-66666",
+  "customerEmail": "buyer@email.com",
+  "customerType": "REGULAR",
+  "orderHistory": 0,
+  "items": [
+    {
+      "productId": "PROD-009",
+      "name": "Amazon Gift Card",
+      "quantity": 50,
+      "price": 100.00
+    }
+  ],
+  "totalAmount": 5000.00,
+  "shippingAddress": {
+    "street": "123 Any St",
+    "city": "Miami",
+    "state": "FL",
+    "zipCode": "33101",
+    "country": "USA"
+  },
+  "paymentMethod": "CREDIT_CARD",
+  "cardLast4": "6666"
+}
