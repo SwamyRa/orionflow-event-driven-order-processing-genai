@@ -38,7 +38,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OrderProcessorHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-    
+
     private final ObjectMapper objectMapper;
     private final ValidationService validationService;
     private final BedrockService bedrockService;
@@ -227,7 +227,7 @@ public class OrderProcessorHandler implements RequestHandler<APIGatewayProxyRequ
     private APIGatewayProxyResponseEvent buildErrorResponse(int statusCode, String message) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        
+
         Map<String, String> errorBody = new HashMap<>();
         errorBody.put("error", message);
 
