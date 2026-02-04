@@ -1,7 +1,7 @@
 replicaCount: 2
 
 serviceAccount:
-  roleArn: arn:aws:iam::418295711730:role/eks-analytics-role
+  roleArn: arn:aws:iam::418295711730:role/order-processing-eks-analytics-role-dev
 
 image:
   repository: 418295711730.dkr.ecr.us-east-1.amazonaws.com/eks-analytics
