@@ -8,6 +8,14 @@ phases:
       - unzip -q /tmp/terraform.zip -d /tmp
       - mv /tmp/terraform /usr/local/bin/
       - terraform --version
+      - echo "Installing kubectl..."
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/
+      - kubectl version --client
+      - echo "Installing Helm..."
+      - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      - helm version
 
   pre_build:
     commands:
@@ -64,6 +72,17 @@ phases:
       - terraform apply -auto-approve -var="notification_email=swamyrapolu1@gmail.com" -var="repository_id=SwamyRa/orionflow-event-driven-order-processing-genai"
       - cd ..
       - echo "✅ Terraform deployment complete"
+
+      - echo "========================================="
+      - echo "☸️ Deploying to EKS..."
+      - echo "========================================="
+      - aws eks update-kubeconfig --name order-processing-cluster-dev --region $AWS_DEFAULT_REGION
+      - cd eks-analytics
+      - helm upgrade --install eks-analytics ./helm --wait
+      - kubectl patch svc eks-analytics -p '{"spec":{"type":"LoadBalancer"}}'
+      - kubectl get svc eks-analytics
+      - cd ..
+      - echo "✅ EKS deployment complete"
 
       - echo "========================================="
       - echo "📝 Writing image definitions..."
