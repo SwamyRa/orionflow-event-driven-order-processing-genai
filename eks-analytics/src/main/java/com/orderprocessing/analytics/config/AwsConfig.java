@@ -3,6 +3,7 @@ package com.orderprocessing.analytics.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.costexplorer.CostExplorerClient;
@@ -30,6 +31,7 @@ public class AwsConfig {
     public DynamoDbClient dynamoDbClient() {
         return DynamoDbClient.builder()
                 .region(Region.of(awsRegion))
+                .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
     }
 
@@ -37,6 +39,7 @@ public class AwsConfig {
     public CloudWatchClient cloudWatchClient() {
         return CloudWatchClient.builder()
                 .region(Region.of(awsRegion))
+                .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
     }
 
@@ -44,6 +47,7 @@ public class AwsConfig {
     public CostExplorerClient costExplorerClient() {
         return CostExplorerClient.builder()
                 .region(Region.US_EAST_1)
+                .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
     }
 
@@ -51,6 +55,7 @@ public class AwsConfig {
     public SnsClient snsClient() {
         return SnsClient.builder()
                 .region(Region.of(awsRegion))
+                .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
     }
 }
