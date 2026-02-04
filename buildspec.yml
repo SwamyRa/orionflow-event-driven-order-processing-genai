@@ -4,10 +4,9 @@ phases:
   install:
     commands:
       - echo "Installing Terraform..."
-      - rm -rf terraform terraform_*.zip
-      - wget -q https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
-      - unzip -q terraform_1.6.0_linux_amd64.zip
-      - mv terraform /usr/local/bin/
+      - wget -q https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip -O /tmp/terraform.zip
+      - unzip -q /tmp/terraform.zip -d /tmp
+      - mv /tmp/terraform /usr/local/bin/
       - terraform --version
 
   pre_build:
