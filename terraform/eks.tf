@@ -167,17 +167,33 @@ resource "aws_eks_node_group" "main" {
   scaling_config {
     desired_size = 2
     max_size     = 3
-    min_size     = 1
+    min_size     = 2
   }
 
   instance_types = ["t3.small"]
   capacity_type  = "ON_DEMAND"
+
+  launch_template {
+    name    = aws_launch_template.eks_nodes.name
+    version = "$Latest"
+  }
 
   depends_on = [
     aws_iam_role_policy_attachment.eks_worker_node_policy,
     aws_iam_role_policy_attachment.eks_cni_policy,
     aws_iam_role_policy_attachment.eks_container_registry_policy
   ]
+}
+
+resource "aws_launch_template" "eks_nodes" {
+  name = "${var.project_name}-eks-nodes-${var.environment}"
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "optional"
+    http_put_response_hop_limit = 2
+    instance_metadata_tags      = "disabled"
+  }
 }
 
 data "aws_availability_zones" "available" {
