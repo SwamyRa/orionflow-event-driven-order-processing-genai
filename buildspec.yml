@@ -1,6 +1,14 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - echo "Installing Terraform..."
+      - wget -q https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+      - unzip -q terraform_1.6.0_linux_amd64.zip
+      - mv terraform /usr/local/bin/
+      - terraform --version
+
   pre_build:
     commands:
       - echo "========================================="
@@ -47,6 +55,15 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo "✅ Docker image pushed"
+
+      - echo "========================================="
+      - echo "🚀 Deploying with Terraform..."
+      - echo "========================================="
+      - cd terraform
+      - terraform init
+      - terraform apply -auto-approve
+      - cd ..
+      - echo "✅ Terraform deployment complete"
 
       - echo "========================================="
       - echo "📝 Writing image definitions..."

@@ -69,13 +69,20 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "arn:aws:bedrock:${var.aws_region}:${data.aws_caller_identity.current.account_id}:inference-profile/*"
         ]
       },
-      # ADDED: Marketplace permissions for Anthropic/Third-party models
       {
         Sid    = "AllowMarketplaceSubscription"
         Effect = "Allow"
         Action = [
           "aws-marketplace:ViewSubscriptions",
           "aws-marketplace:Subscribe"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "codepipeline:PutJobSuccessResult",
+          "codepipeline:PutJobFailureResult"
         ]
         Resource = "*"
       }
