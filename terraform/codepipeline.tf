@@ -108,6 +108,27 @@ resource "aws_iam_role_policy" "codebuild_policy" {
       {
         Effect = "Allow"
         Action = [
+          "s3:ListBucket",
+          "s3:GetObject",
+          "s3:PutObject"
+        ]
+        Resource = [
+          "arn:aws:s3:::order-processing-terraform-state-418295711730",
+          "arn:aws:s3:::order-processing-terraform-state-418295711730/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem"
+        ]
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/terraform-state-lock"
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
@@ -116,6 +137,20 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           "ecr:InitiateLayerUpload",
           "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:*",
+          "eks:*",
+          "ec2:*",
+          "lambda:*",
+          "dynamodb:*",
+          "s3:*",
+          "sns:*",
+          "cloudwatch:*"
         ]
         Resource = "*"
       }
@@ -146,6 +181,16 @@ resource "aws_codebuild_project" "build" {
     environment_variable {
       name  = "AWS_DEFAULT_REGION"
       value = var.aws_region
+    }
+
+    environment_variable {
+      name  = "TF_VAR_notification_email"
+      value = var.notification_email
+    }
+
+    environment_variable {
+      name  = "TF_VAR_repository_id"
+      value = var.repository_id
     }
   }
 
