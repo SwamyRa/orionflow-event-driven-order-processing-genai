@@ -145,6 +145,10 @@ resource "aws_eks_cluster" "main" {
   name     = "${var.project_name}-cluster-${var.environment}"
   role_arn = aws_iam_role.eks_cluster_role.arn
 
+  access_config {
+    authentication_mode = "API_AND_CONFIG_MAP"
+  }
+
   vpc_config {
     subnet_ids = aws_subnet.eks_subnet[*].id
   }
