@@ -256,21 +256,4 @@ resource "aws_codepipeline" "pipeline" {
       }
     }
   }
-
-  stage {
-    name = "Deploy"
-
-    action {
-      name            = "DeployLambda"
-      category        = "Invoke"
-      owner           = "AWS"
-      provider        = "Lambda"
-      input_artifacts = ["build_output"]
-      version         = "1"
-
-      configuration = {
-        FunctionName = aws_lambda_function.order_processor.function_name
-      }
-    }
-  }
 }
