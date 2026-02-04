@@ -71,6 +71,13 @@
             <version>${aws.sdk.version}</version>
         </dependency>
 
+        <!-- AWS SDK v2 - CodePipeline -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>codepipeline</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
         <!-- Jackson for JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

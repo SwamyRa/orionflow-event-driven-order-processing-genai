@@ -43,7 +43,8 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
       {
         Effect = "Allow"
         Action = [
-          "lambda:UpdateFunctionCode"
+          "lambda:UpdateFunctionCode",
+          "lambda:InvokeFunction"
         ]
         Resource = aws_lambda_function.order_processor.arn
       },
