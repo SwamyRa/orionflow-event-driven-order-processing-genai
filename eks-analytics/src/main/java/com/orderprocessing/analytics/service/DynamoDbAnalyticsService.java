@@ -107,22 +107,87 @@ public class DynamoDbAnalyticsService {
         double totalCost = 0;
         double bedrockCost = 0;
         double lambdaCost = 0;
+        double dynamoDbCost = 0;
+        double s3Cost = 0;
+        double snsCost = 0;
+        double apiGatewayCost = 0;
+        int totalBedrockTokens = 0;
 
         try {
-            // In production: Query all statuses and parse orderData JSON
-            // Simplified: Return placeholder values
+            // Scan all orders and parse orderData JSON
+            ScanRequest request = ScanRequest.builder()
+                    .tableName(tableName)
+                    .filterExpression("SK = :metadata")
+                    .expressionAttributeValues(Map.of(
+                            ":metadata", AttributeValue.builder().s("METADATA").build()
+                    ))
+                    .build();
+
+            ScanResponse response = dynamoDbClient.scan(request);
+            
+            for (Map<String, AttributeValue> item : response.items()) {
+                if (item.containsKey("orderData")) {
+                    String orderDataJson = item.get("orderData").s();
+                    // Simple JSON parsing for costMetrics
+                    if (orderDataJson.contains("costMetrics")) {
+                        bedrockCost += extractCost(orderDataJson, "bedrockCost");
+                        lambdaCost += extractCost(orderDataJson, "lambdaCost");
+                        dynamoDbCost += extractCost(orderDataJson, "dynamodbCost");
+                        s3Cost += extractCost(orderDataJson, "s3Cost");
+                        snsCost += extractCost(orderDataJson, "snsCost");
+                        apiGatewayCost += extractCost(orderDataJson, "apiGatewayCost");
+                        totalCost += extractCost(orderDataJson, "totalProcessingCost");
+                        totalBedrockTokens += extractTokens(orderDataJson, "bedrockTokensUsed");
+                    }
+                }
+            }
+
             costs.put("totalProcessingCost", totalCost);
             costs.put("bedrockCost", bedrockCost);
             costs.put("lambdaCost", lambdaCost);
-            costs.put("dynamoDbCost", 0.0);
-            costs.put("s3Cost", 0.0);
-            costs.put("snsCost", 0.0);
-            costs.put("apiGatewayCost", 0.0);
+            costs.put("dynamoDbCost", dynamoDbCost);
+            costs.put("s3Cost", s3Cost);
+            costs.put("snsCost", snsCost);
+            costs.put("apiGatewayCost", apiGatewayCost);
+            costs.put("totalBedrockTokens", (double) totalBedrockTokens);
+
+            log.info("Aggregated costs from {} orders: total=${}, bedrock=${}, tokens={}", 
+                    response.count(), totalCost, bedrockCost, totalBedrockTokens);
 
         } catch (Exception e) {
             log.error("Error aggregating costs", e);
         }
 
         return costs;
+    }
+
+    private double extractCost(String json, String field) {
+        try {
+            String pattern = "\"" + field + "\":";
+            int start = json.indexOf(pattern);
+            if (start == -1) return 0.0;
+            start += pattern.length();
+            int end = json.indexOf(",", start);
+            if (end == -1) end = json.indexOf("}", start);
+            String value = json.substring(start, end).trim();
+            return Double.parseDouble(value);
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
+
+    private int extractTokens(String json, String field) {
+        try {
+            String pattern = "\"" + field + "\":";
+            int start = json.indexOf(pattern);
+            if (start == -1) return 0;
+            start += pattern.length();
+            int end = json.indexOf(",", start);
+            if (end == -1) end = json.indexOf("}", start);
+            String value = json.substring(start, end).trim();
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

@@ -78,9 +78,24 @@ public class CostExplorerService {
                         costs.put("actualS3Cost", costs.getOrDefault("actualS3Cost", 0.0) + cost);
                     } else if (service.contains("Bedrock")) {
                         costs.put("actualBedrockCost", costs.getOrDefault("actualBedrockCost", 0.0) + cost);
+                    } else if (service.contains("SNS") || service.contains("Simple Notification")) {
+                        costs.put("actualSnsCost", costs.getOrDefault("actualSnsCost", 0.0) + cost);
+                    } else if (service.contains("API Gateway")) {
+                        costs.put("actualApiGatewayCost", costs.getOrDefault("actualApiGatewayCost", 0.0) + cost);
                     }
                 }
             }
+
+            // Ensure all services are present with 5 decimal places
+            costs.putIfAbsent("actualLambdaCost", 0.0);
+            costs.putIfAbsent("actualDynamoDbCost", 0.0);
+            costs.putIfAbsent("actualS3Cost", 0.0);
+            costs.putIfAbsent("actualBedrockCost", 0.0);
+            costs.putIfAbsent("actualSnsCost", 0.0);
+            costs.putIfAbsent("actualApiGatewayCost", 0.0);
+
+            // Round to 5 decimal places
+            costs.replaceAll((k, v) -> Math.round(v * 100000.0) / 100000.0);
 
             log.info("Retrieved actual costs from Cost Explorer: {}", costs);
 
