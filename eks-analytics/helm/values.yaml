@@ -6,7 +6,7 @@ serviceAccount:
 image:
   repository: 418295711730.dkr.ecr.us-east-1.amazonaws.com/eks-analytics
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 service:
   type: ClusterIP
