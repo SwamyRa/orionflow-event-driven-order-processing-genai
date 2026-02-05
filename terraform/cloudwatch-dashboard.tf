@@ -58,7 +58,7 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 6
         properties = {
           metrics = [
-            ["OrderProcessing", "OrdersProcessed", "Status", "APPROVED", { stat = "Sum", label = "Approved", color = "#2ca02c" }],
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "Status", "APPROVED", { stat = "Sum", label = "Approved", color = "#2ca02c" }],
             ["...", "REJECTED", { stat = "Sum", label = "Rejected", color = "#d62728" }],
             ["...", "PENDING_REVIEW", { stat = "Sum", label = "Pending Review", color = "#ff7f0e" }]
           ]
@@ -82,7 +82,7 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 6
         properties = {
           metrics = [
-            ["OrderProcessing", "FraudScore", { stat = "Average", label = "Avg Fraud Score" }],
+            ["OrderProcessing/FinOps", "BedrockCost", { stat = "Average", label = "Avg Fraud Score" }],
             ["...", { stat = "Minimum", label = "Min Score" }],
             ["...", { stat = "Maximum", label = "Max Score" }]
           ]
@@ -107,7 +107,7 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 6
         properties = {
           metrics = [
-            ["OrderProcessing", "ProcessingCost", { stat = "Sum", label = "Total Cost ($)" }]
+            ["OrderProcessing/FinOps", "OrderProcessingCost", { stat = "Sum", label = "Total Cost ($)" }]
           ]
           view    = "timeSeries"
           stacked = false
@@ -153,7 +153,7 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         properties = {
           metrics = [
             ["AWS/Bedrock", "Invocations", { stat = "Sum", label = "Bedrock API Calls" }],
-            ["OrderProcessing", "BedrockTokens", { stat = "Sum", label = "Tokens Used" }]
+            ["OrderProcessing/FinOps", "BedrockTokens", { stat = "Sum", label = "Tokens Used" }]
           ]
           view    = "timeSeries"
           stacked = false
@@ -174,7 +174,7 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         width = 24
         height = 6
         properties = {
-          query   = "SOURCE '/aws/lambda/order-processor'\n| fields @timestamp, @message\n| filter @message like /APPROVED|REJECTED/\n| sort @timestamp desc\n| limit 20"
+          query   = "SOURCE '/aws/lambda/${var.project_name}-processor-${var.environment}'\n| fields @timestamp, @message\n| filter @message like /APPROVED|REJECTED/\n| sort @timestamp desc\n| limit 20"
           region  = var.aws_region
           title   = "Recent Order Processing Logs"
           stacked = false
@@ -188,7 +188,7 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 3
         properties = {
           metrics = [
-            ["OrderProcessing", "OrdersProcessed", { stat = "Sum", label = "Total Orders Processed" }]
+            ["OrderProcessing/FinOps", "OrderProcessingCost", { stat = "Sum", label = "Total Orders Processed" }]
           ]
           view    = "singleValue"
           region  = var.aws_region
@@ -204,7 +204,7 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 3
         properties = {
           metrics = [
-            ["OrderProcessing", "ProcessingCost", { stat = "Sum", label = "Total Processing Cost" }]
+            ["OrderProcessing/FinOps", "OrderProcessingCost", { stat = "Sum", label = "Total Processing Cost" }]
           ]
           view    = "singleValue"
           region  = var.aws_region
@@ -220,3 +220,4 @@ output "cloudwatch_dashboard_url" {
   description = "CloudWatch Dashboard URL"
   value       = "https://console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#dashboards:name=${aws_cloudwatch_dashboard.order_processing.dashboard_name}"
 }
+
