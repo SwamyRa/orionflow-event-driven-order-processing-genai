@@ -142,13 +142,13 @@ public class DynamoDbAnalyticsService {
                 }
             }
 
-            costs.put("totalProcessingCost", totalCost);
-            costs.put("bedrockCost", bedrockCost);
-            costs.put("lambdaCost", lambdaCost);
-            costs.put("dynamoDbCost", dynamoDbCost);
-            costs.put("s3Cost", s3Cost);
-            costs.put("snsCost", snsCost);
-            costs.put("apiGatewayCost", apiGatewayCost);
+            costs.put("totalProcessingCost", Math.round(totalCost * 100000.0) / 100000.0);
+            costs.put("bedrockCost", Math.round(bedrockCost * 100000.0) / 100000.0);
+            costs.put("lambdaCost", Math.round(lambdaCost * 100000.0) / 100000.0);
+            costs.put("dynamoDbCost", Math.round(dynamoDbCost * 100000.0) / 100000.0);
+            costs.put("s3Cost", Math.round(s3Cost * 100000.0) / 100000.0);
+            costs.put("snsCost", Math.round(snsCost * 100000.0) / 100000.0);
+            costs.put("apiGatewayCost", Math.round(apiGatewayCost * 100000.0) / 100000.0);
             costs.put("totalBedrockTokens", (double) totalBedrockTokens);
 
             log.info("Aggregated costs from {} orders: total=${}, bedrock=${}, tokens={}", 
