@@ -58,9 +58,9 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 6
         properties = {
           metrics = [
-            ["OrderProcessing/FinOps", "OrderProcessingCost", "Status", "APPROVED", { stat = "Sum", label = "Approved", color = "#2ca02c" }],
-            ["...", "REJECTED", { stat = "Sum", label = "Rejected", color = "#d62728" }],
-            ["...", "PENDING_REVIEW", { stat = "Sum", label = "Pending Review", color = "#ff7f0e" }]
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "APPROVED", { stat = "Sum", label = "Approved", color = "#2ca02c" }],
+            ["...", "...", "...", "REJECTED", { stat = "Sum", label = "Rejected", color = "#d62728" }],
+            ["...", "...", "...", "PENDING_REVIEW", { stat = "Sum", label = "Pending Review", color = "#ff7f0e" }]
           ]
           view    = "timeSeries"
           stacked = true
