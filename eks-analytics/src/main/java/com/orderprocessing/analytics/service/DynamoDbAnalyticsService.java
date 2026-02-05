@@ -75,22 +75,18 @@ public class DynamoDbAnalyticsService {
         try {
             Map<String, String> expressionNames = new HashMap<>();
             expressionNames.put("#status", "status");
-            expressionNames.put("#createdAt", "createdAt");
 
             Map<String, AttributeValue> expressionValues = new HashMap<>();
             expressionValues.put(":status", AttributeValue.builder().s(status).build());
-            expressionValues.put(":startDate", AttributeValue.builder().s(startDate.toString()).build());
-            expressionValues.put(":endDate", AttributeValue.builder().s(endDate.toString()).build());
 
-            QueryRequest request = QueryRequest.builder()
+            ScanRequest request = ScanRequest.builder()
                     .tableName(tableName)
-                    .indexName("StatusDateIndex")
-                    .keyConditionExpression("#status = :status AND #createdAt BETWEEN :startDate AND :endDate")
+                    .filterExpression("#status = :status")
                     .expressionAttributeNames(expressionNames)
                     .expressionAttributeValues(expressionValues)
                     .build();
 
-            QueryResponse response = dynamoDbClient.query(request);
+            ScanResponse response = dynamoDbClient.scan(request);
             return response.count();
             
         } catch (Exception e) {
