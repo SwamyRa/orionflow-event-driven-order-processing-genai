@@ -82,19 +82,17 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 6
         properties = {
           metrics = [
-            ["OrderProcessing/FinOps", "BedrockCost", { stat = "Average", label = "Avg Fraud Score" }],
-            ["...", { stat = "Minimum", label = "Min Score" }],
-            ["...", { stat = "Maximum", label = "Max Score" }]
+            ["OrderProcessing/FinOps", "BedrockCost", "OrderStatus", "APPROVED", { stat = "Average", label = "Approved Orders" }],
+            ["OrderProcessing/FinOps", "BedrockCost", "OrderStatus", "REJECTED", { stat = "Average", label = "Rejected Orders" }]
           ]
           view    = "timeSeries"
           stacked = false
           region  = var.aws_region
-          title   = "AI Fraud Scores"
+          title   = "Bedrock Cost per Order"
           period  = 300
           yAxis = {
             left = {
               min = 0
-              max = 10
             }
           }
         }
@@ -107,12 +105,14 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 6
         properties = {
           metrics = [
-            ["OrderProcessing/FinOps", "OrderProcessingCost", { stat = "Sum", label = "Total Cost ($)" }]
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "APPROVED", { stat = "Sum" }],
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "REJECTED", { stat = "Sum" }],
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "PENDING_REVIEW", { stat = "Sum" }]
           ]
           view    = "timeSeries"
-          stacked = false
+          stacked = true
           region  = var.aws_region
-          title   = "Processing Costs"
+          title   = "Processing Costs by Status"
           period  = 300
           yAxis = {
             left = {
@@ -188,7 +188,9 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 3
         properties = {
           metrics = [
-            ["OrderProcessing/FinOps", "OrderProcessingCost", { stat = "Sum", label = "Total Orders Processed" }]
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "APPROVED", { stat = "SampleCount", label = "Approved" }],
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "REJECTED", { stat = "SampleCount", label = "Rejected" }],
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "PENDING_REVIEW", { stat = "SampleCount", label = "Pending" }]
           ]
           view    = "singleValue"
           region  = var.aws_region
@@ -204,7 +206,9 @@ resource "aws_cloudwatch_dashboard" "order_processing" {
         height = 3
         properties = {
           metrics = [
-            ["OrderProcessing/FinOps", "OrderProcessingCost", { stat = "Sum", label = "Total Processing Cost" }]
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "APPROVED", { stat = "Sum" }],
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "REJECTED", { stat = "Sum" }],
+            ["OrderProcessing/FinOps", "OrderProcessingCost", "OrderStatus", "PENDING_REVIEW", { stat = "Sum" }]
           ]
           view    = "singleValue"
           region  = var.aws_region
