@@ -75,18 +75,21 @@ public class DynamoDbAnalyticsService {
         try {
             Map<String, String> expressionNames = new HashMap<>();
             expressionNames.put("#status", "status");
+            expressionNames.put("#sk", "SK");
 
             Map<String, AttributeValue> expressionValues = new HashMap<>();
             expressionValues.put(":status", AttributeValue.builder().s(status).build());
+            expressionValues.put(":metadata", AttributeValue.builder().s("METADATA").build());
 
             ScanRequest request = ScanRequest.builder()
                     .tableName(tableName)
-                    .filterExpression("#status = :status")
+                    .filterExpression("#status = :status AND #sk = :metadata")
                     .expressionAttributeNames(expressionNames)
                     .expressionAttributeValues(expressionValues)
                     .build();
 
             ScanResponse response = dynamoDbClient.scan(request);
+            log.info("Scanned {} items with status {}", response.count(), status);
             return response.count();
             
         } catch (Exception e) {
